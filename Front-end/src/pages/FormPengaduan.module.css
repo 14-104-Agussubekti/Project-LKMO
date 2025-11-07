@@ -1,0 +1,75 @@
+/*
+ * File CSS untuk Form Pengaduan
+ * Diperbarui dengan variabel warna baru
+ */
+
+.card {
+  max-width: 32rem; /* max-w-lg */
+  margin: auto;
+  background-color: var(--color-bg-card);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--color-border-medium);
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: var(--color-text-dark);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem; /* Beri sedikit jarak antar field */
+}
+
+.label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600; /* Dibuat sedikit lebih tebal */
+  color: var(--color-text-medium);
+  margin-bottom: 0.25rem; /* Jarak antara label dan input */
+}
+
+.button {
+  width: 100%;
+  background-color: var(--color-primary); /* Biru Langit */
+  color: var(--color-text-inverse);
+  padding: 0.75rem; /* Dibuat sedikit lebih besar */
+  font-size: 1rem;
+}
+.button:hover {
+  background-color: var(--color-primary-dark);
+}
+
+/* Style khusus untuk input file */
+.fileInput {
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+}
+.fileInput::file-selector-button {
+  margin-right: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  background-color: var(--color-bg-main);
+  color: var(--color-primary);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.fileInput::file-selector-button:hover {
+  background-color: var(--color-border-light);
+}
+
+/* --- STYLE BARU UNTUK KEMUNCULAN FIELD 'LAINNYA' --- */
+.jenisLainnyaWrapper {
+  /* Menggunakan animasi global 'fadeIn' dari index.css */
+  animation: fadeIn 0.3s ease-out;
+}
+

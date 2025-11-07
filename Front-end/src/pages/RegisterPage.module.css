@@ -1,0 +1,19 @@
+/*
+ * File CSS untuk Halaman Register
+ * Kita impor (gunakan ulang) semua style dari Halaman Login
+ * agar tampilannya konsisten.
+ */
+@import './LoginPage.module.css';
+
+/* Semua style seperti .loginWrapper, .loginCard, .form, .input, .submitButton, dll
+  sekarang otomatis tersedia di sini dari file LoginPage.module.css.
+*/
+
+/* --- STYLE BARU UNTUK VALIDASI PASSWORD --- */
+.passwordError {
+  font-size: 0.8rem;
+  color: var(--color-danger); /* Warna merah */
+  margin-top: 0.25rem;
+  margin-bottom: 0;
+}
+

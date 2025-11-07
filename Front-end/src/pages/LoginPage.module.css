@@ -1,0 +1,147 @@
+/*
+ * File CSS untuk Halaman Login
+ * Disederhanakan untuk menghapus 'Lupa Password'
+ */
+
+.loginWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 3rem 1rem; /* Beri padding atas/bawah */
+}
+
+.loginCard {
+  width: 100%;
+  max-width: 450px;
+  background: var(--color-bg-card);
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--color-border-medium);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: var(--color-text-light);
+  margin-top: 0.5rem;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-medium);
+}
+
+.input {
+  /* Menggunakan style input global dari index.css */
+  margin-top: 0; /* Override style global */
+}
+
+/* --- DIPERBARUI --- */
+/* Kita ubah dari 'space-between' menjadi 'flex-start' */
+/* agar 'Remember me' tetap di kiri */
+.formExtras {
+  display: flex;
+  justify-content: flex-start; /* <-- Diubah dari space-between */
+  align-items: center;
+  font-size: 0.875rem;
+}
+
+.checkboxWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.checkbox {
+  /* Hapus style default */
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--color-border-medium);
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+}
+.checkbox:checked {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+/* Tambahkan tanda centang */
+.checkbox:checked::after {
+  content: '✔';
+  font-size: 12px;
+  color: var(--color-text-inverse);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.checkboxLabel {
+  color: var(--color-text-light);
+  cursor: pointer;
+}
+
+.link {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+.link:hover {
+  text-decoration: underline;
+}
+
+.submitButton {
+  /* Menggunakan style tombol global dari index.css */
+  padding: 0.75rem;
+  font-size: 1rem;
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+}
+.submitButton:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.signupText {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: var(--color-text-light);
+  font-size: 0.875rem;
+}
+
+.error {
+  color: var(--color-danger);
+  background-color: var(--color-bg-main);
+  border: 1px solid var(--color-danger);
+  padding: 0.75rem;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 0.875rem;
+}

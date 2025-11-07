@@ -1,0 +1,229 @@
+/*
+ * File CSS untuk Dashboard Masyarakat
+ * Disesuaikan agar identik dengan style tabel Admin Dashboard
+ */
+
+.card {
+  background: var(--color-bg-card);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  padding: 2rem;
+  width: 100%;
+  border: 1px solid var(--color-border-medium);
+}
+
+.title {
+  font-size: 1.875rem; /* text-3xl */
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: var(--color-text-dark); /* Cokelat Kayu */
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--color-border-medium);
+}
+
+.tableWrapper {
+  overflow: hidden; 
+  border: 1px solid var(--color-border-medium);
+  border-radius: 8px;
+}
+
+.table {
+  width: 100%; /* min-w-full */
+  border-collapse: collapse;
+}
+
+.tableHead {
+  background-color: var(--color-bg-main); /* Latar Jerami Super Terang */
+}
+
+.tableHead th {
+  padding: 0.75rem 1.5rem; /* px-6 py-3 */
+  text-align: left;
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 600; /* font-semibold */
+  color: var(--color-text-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--color-border-medium);
+  border-left: 1px solid var(--color-border-medium);
+}
+
+.tableHead th:first-child {
+  border-left: none;
+}
+
+.tableBody {
+  background-color: var(--color-bg-card);
+}
+.tableBody tr {
+  border-bottom: 1px solid var(--color-border-medium);
+}
+.tableBody tr:last-child {
+  border-bottom: none;
+}
+
+.tableBody td {
+  padding: 1rem 1.5rem; /* px-6 py-4 */
+  vertical-align: top; /* Diubah dari 'middle' agar align ke atas */
+  font-size: 0.875rem; /* text-sm */
+  color: var(--color-text-light);
+  /* 'white-space: nowrap' DIHAPUS agar bisa wrap */
+  border-left: 1px solid var(--color-border-medium);
+}
+
+.tableBody td:first-child {
+  border-left: none;
+}
+
+.tableBody .cellTitle {
+  font-weight: 600;
+  color: var(--color-text-dark); /* Cokelat Kayu */
+  white-space: normal; /* Biarkan judul panjang wrap */
+}
+
+/* --- STYLE UNTUK SEL LOKASI --- */
+.cellLokasi {
+  white-space: normal; /* Biarkan lokasi wrap jika panjang */
+  color: var(--color-text-medium);
+  min-width: 150px; /* Beri lebar minimum */
+}
+
+/* --- STYLE UNTUK ALASAN PENOLAKAN DI TABEL --- */
+.rejectionReasonInTable {
+  font-size: 0.8rem;
+  color: var(--color-danger); /* Warna merah */
+  font-style: italic;
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+  white-space: normal;
+}
+
+/* --- STYLE BARU UNTUK KOLOM AKSI (Disalin dari Admin) --- */
+.actionCell {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap; 
+  white-space: nowrap; 
+}
+
+.actionButton {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  background-color: var(--color-border-medium); /* Warna Cokelat Jerami netral */
+  color: var(--color-text-dark);
+  /* Style global dari index.css */
+  border-radius: 0.375rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-weight: 500;
+}
+.actionButton:hover {
+  opacity: 0.8;
+}
+
+/* --- STYLE BARU UNTUK MODAL (Disalin dari Admin) --- */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out; /* Menggunakan animasi global */
+}
+
+.modalContent {
+  background: var(--color-bg-card);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  z-index: 1001;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--color-border-light);
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+
+.modalTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-accent-dark); /* Hijau Hutan */
+  margin: 0;
+}
+
+.modalCloseButton {
+  font-size: 2rem;
+  font-weight: 300;
+  color: var(--color-text-light);
+  background: none;
+  border: none;
+  padding: 0;
+  line-height: 1;
+}
+.modalCloseButton:hover {
+  color: var(--color-text-dark);
+}
+
+.modalBody {
+  font-size: 1rem;
+  color: var(--color-text-medium);
+  line-height: 1.6;
+}
+
+.modalBody p {
+  margin-bottom: 1rem;
+}
+
+.modalDivider {
+  border: none;
+  border-top: 1px solid var(--color-border-light);
+  margin: 1.5rem 0;
+}
+
+.modalImageContainer {
+  margin-top: 1.5rem;
+}
+
+.modalImage {
+  width: 100%;
+  max-width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--color-border-light);
+  margin-top: 0.5rem;
+}
+
+/* --- STYLE BARU UNTUK ALASAN PENOLAKAN DI MODAL --- */
+.rejectionInfo {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background-color: var(--color-bg-main);
+  border: 1px solid var(--color-danger);
+  border-radius: 8px;
+}
+
+.rejectionInfo strong {
+  color: var(--color-danger);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.rejectionInfo p {
+  color: var(--color-text-medium);
+  margin: 0;
+}
+

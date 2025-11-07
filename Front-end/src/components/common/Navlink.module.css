@@ -1,0 +1,22 @@
+/* Menggunakan font Poppins & variabel warna dari index.css */
+
+.navLink {
+  color: var(--color-text-base); /* <-- Updated (Cokelat Kayu Muda) */
+  font-weight: 500; /* Dibuat sedikit lebih tebal */
+  text-decoration: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.navLink:hover {
+  color: var(--color-primary); /* <-- Updated (Biru Langit) */
+  background-color: var(--color-primary-light-bg); /* <-- Updated (Putih Awan) */
+}
+
+.active {
+  color: var(--color-primary); /* <-- Updated (Biru Langit) */
+  font-weight: 700;
+  background-color: var(--color-primary-light-bg); /* <-- Updated (Putih Awan) */
+}
+

@@ -1,0 +1,91 @@
+/*
+ * File CSS Global (Kamus Warna & Font)
+ * Pastikan file Anda sama seperti ini
+ */
+@import url('https_CSS_2.css?family=Poppins:wght@400;500;600;700&display=swap');
+
+:root {
+  /* 1. PALET WARNA UTAMA (BARU) */
+  --color-primary: #4A90E2;        /* Biru Langit */
+  --color-primary-dark: #2A572B;   /* Hijau Hutan (Digunakan sbg pengganti biru tua) */
+  --color-accent-dark: #2A572B;    /* Hijau Hutan */
+  --color-accent-light: #7DB149;   /* Hijau Segar */
+  --color-danger: #c53030;         /* Merah (Untuk tombol logout/error) */
+
+  /* 2. WARNA LATAR & TEKS (BARU) */
+  --color-bg-main: #FAF7F2;        /* Latar Jerami Super Terang (BARU) */
+  --color-bg-card: #F4F7F8;        /* Putih Awan (BARU) */
+  --color-text-dark: #4A3F35;      /* Cokelat Kayu */
+  --color-text-medium: #7a6a5d;    /* Turunan Cokelat Kayu (Lebih terang) */
+  --color-text-light: #8a7e74;     /* Turunan Cokelat Kayu (Paling terang) */
+  --color-text-inverse: #FFFFFF;   /* Putih Bersih */
+
+  /* 3. WARNA BORDER (BARU) */
+  --color-border-light: #E0D9CE;   /* Turunan Cokelat Jerami (Sangat Terang) */
+  --color-border-medium: #B59A6A;  /* Cokelat Jerami (Warna Asli) */
+}
+
+/* --- STYLE GLOBAL --- */
+
+body {
+  margin: 0;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-bg-main); /* Menggunakan Latar Jerami Terang */
+  color: var(--color-text-medium);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Animasi global */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Style dasar untuk form input (opsional tapi membantu) */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea,
+select {
+  margin-top: 0.25rem;
+  display: block;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-border-light);
+  border-radius: 0.5rem; /* rounded-lg */
+  box-shadow: none;
+  background-color: #FFFFFF; /* Selalu putih bersih agar mudah dibaca */
+  color: var(--color-text-dark);
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.875rem;
+}
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--color-primary); /* Biru Langit */
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2); /* Bayangan Biru Langit */
+}
+
+/* Style dasar untuk tombol */
+button {
+  cursor: pointer;
+  font-family: 'Poppins', inherit;
+  font-weight: 500;
+  border-radius: 0.5rem; /* rounded-lg */
+  border: none;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.2s ease-out;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
