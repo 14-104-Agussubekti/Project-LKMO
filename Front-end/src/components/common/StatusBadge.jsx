@@ -1,14 +1,15 @@
+
 import React from 'react';
 
 // Style inline juga lebih mudah untuk komponen dinamis kecil ini
 const StatusBadge = ({ status }) => {
   const statusColors = {
     // --- TAMBAHKAN DUA STATUS BARU DI BAWAH INI ---
-    menunggu_persetujuan: {
+    submitted: {
       backgroundColor: '#fef9c3', // bg-yellow-100 (Sama seperti tertunda)
       color: '#854d0e', // text-yellow-800
     },
-    ditolak: {
+    rejected: {
       backgroundColor: '#fee2e2', // bg-red-100
       color: '#991b1b', // text-red-800
     },
@@ -17,11 +18,11 @@ const StatusBadge = ({ status }) => {
       backgroundColor: '#fef9c3', // bg-yellow-100
       color: '#854d0e', // text-yellow-800
     },
-    diproses: {
+    in_progress: {
       backgroundColor: '#dbeafe', // bg-blue-100
       color: '#1e40af', // text-blue-800
     },
-    selesai: {
+    resolved: {
       backgroundColor: 'var(--color-bg-main)', // Latar Jerami (Sesuai palet)
       color: 'var(--color-accent-dark)', // Hijau Hutan
       border: '1px solid var(--color-accent-light)' // Border Hijau Segar
