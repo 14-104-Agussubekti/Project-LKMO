@@ -1,0 +1,34 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int         @id @default(autoincrement())
+  name       String
+  email      String      @unique
+  password   String
+  role       String      @default("masyarakat") // default user role
+  complaints Complaint[]
+  createdAt  DateTime    @default(now())
+}
+
+model Complaint {
+  id              String   @id @default(cuid()) // tiket
+  title           String
+  category        String
+  location        String?
+  message         String
+  attachment      String?
+  status          String   @default("submitted") // submitted|in_progress|resolved|rejected
+  rejectionReason String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  userId Int?
+  user   User?    @relation(fields: [userId], references: [id])
+}
