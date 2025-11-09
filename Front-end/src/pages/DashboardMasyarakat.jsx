@@ -9,8 +9,35 @@ const BACKEND_ORIGIN = API_BASE.replace(/\/api\/?$/, "");
 
 const makeAttachmentUrl = (attachment) => {
   if (!attachment) return null;
-  if (attachment.startsWith("http://") || attachment.startsWith("https://")) return attachment;
-  return BACKEND_ORIGIN + (attachment.startsWith("/") ? attachment : `/${attachment}`);
+
+  // already absolute
+  if (/^https?:\/\//i.test(attachment)) return attachment;
+
+  // normalize backslashes to slashes
+  let a = attachment.replace(/\\/g, "/").trim();
+
+  // remove leading "./" or leading slash
+  a = a.replace(/^\.?\//, "");
+
+  // backend origin (ensure no trailing slash)
+  const backend = BACKEND_ORIGIN.replace(/\/$/, "");
+
+  // If a already contains backend origin (odd case)
+  if (a.startsWith(backend)) return a;
+
+  // If a already starts with "uploads" or "uploads/"
+  if (/^uploads\//i.test(a)) {
+    return backend + "/" + encodeURI(a);
+  }
+
+  // If a looks like "/uploads/<file>" handled here
+  if (/^\/?uploads\//i.test(attachment)) {
+    const pathPart = attachment.replace(/^\/+/, "");
+    return backend + "/" + encodeURI(pathPart);
+  }
+
+  // fallback: assume it's filename, place under /uploads/
+  return backend + "/uploads/" + encodeURI(a);
 };
 
 const formatDate = (iso) => {
@@ -34,6 +61,7 @@ const DashboardMasyarakat = () => {
   const [error, setError] = useState(null);
   const [pengaduan, setPengaduan] = useState([]);
   const [selected, setSelected] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
 
   const loadMine = async () => {
     setLoading(true);
@@ -67,6 +95,28 @@ const DashboardMasyarakat = () => {
     loadMine();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Yakin ingin menghapus pengaduan ini? Tindakan ini tidak dapat dibatalkan.")) return;
+    try {
+      setDeletingId(id);
+      const res = await authFetch(`${API_BASE}/complaints/${id}`, { method: "DELETE" });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(body.error || "Gagal menghapus pengaduan");
+      }
+      // remove from state
+      setPengaduan((prev) => prev.filter((p) => p.id !== id));
+      // if currently viewing modal for this id, close it
+      if (selected?.id === id) setSelected(null);
+      alert("Pengaduan berhasil dihapus.");
+    } catch (err) {
+      console.error("Delete error:", err);
+      alert(err.message || "Gagal menghapus pengaduan.");
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   return (
     <div className={`${styles.card} animate-fadeIn`}>
@@ -108,6 +158,15 @@ const DashboardMasyarakat = () => {
                   <td className={styles.actionCell}>
                     <button className={styles.actionButton} onClick={() => setSelected(p)}>
                       Lihat Detail
+                    </button>
+
+                    <button
+                      className={styles.actionButtonTolak ? styles.actionButtonTolak : styles.actionButton}
+                      onClick={() => handleDelete(p.id)}
+                      disabled={deletingId === p.id}
+                      style={{ marginLeft: 8 }}
+                    >
+                      {deletingId === p.id ? "Menghapus..." : "Hapus"}
                     </button>
                   </td>
                 </tr>
@@ -151,6 +210,15 @@ const DashboardMasyarakat = () => {
                     src={selected.foto_bukti}
                     alt="Foto Bukti"
                     style={{ maxWidth: "100%", borderRadius: 8, marginTop: 8, objectFit: "cover" }}
+                    onError={(e) => {
+                      console.warn("Image failed to load:", selected.foto_bukti);
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src =
+                        "data:image/svg+xml;utf8," +
+                        encodeURIComponent(
+                          `<svg xmlns='http://www.w3.org/2000/svg' width='600' height='400'><rect width='100%' height='100%' fill='%23eee'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%23777' font-size='20'>Gagal memuat gambar</text></svg>`
+                        );
+                    }}
                   />
                 ) : (
                   <div style={{ color: "#777", fontSize: 14, marginTop: 8 }}>Tidak ada foto bukti.</div>
@@ -163,6 +231,25 @@ const DashboardMasyarakat = () => {
                   <p>{selected.alasan_penolakan}</p>
                 </div>
               )}
+
+              <div style={{ marginTop: 12 }}>
+                <button
+                  onClick={() => {
+                    handleDelete(selected.id);
+                  }}
+                  disabled={deletingId === selected.id}
+                  style={{
+                    backgroundColor: "#e03e2d",
+                    color: "#fff",
+                    padding: "8px 12px",
+                    borderRadius: 6,
+                    border: 0,
+                    cursor: "pointer",
+                  }}
+                >
+                  {deletingId === selected.id ? "Menghapus..." : "Hapus Pengaduan"}
+                </button>
+              </div>
             </div>
           </div>
         </div>

@@ -24,7 +24,22 @@ app.use(cors({ origin: CLIENT_ORIGIN, credentials: true }));
 // expose uploads folder
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+// expose uploads folder — set headers supaya gambar bisa di-embed lintas-origin (dev)
+app.use(
+  "/uploads",
+  express.static(path.join(process.cwd(), "uploads"), {
+    setHeaders: (res, filePath) => {
+      // izinkan origin frontend (atau ganti menjadi "*" jika kamu mau terbuka ke semua origin)
+      const allowedOrigin = process.env.CLIENT_ORIGIN || "http://localhost:5173";
+      res.setHeader("Access-Control-Allow-Origin", allowedOrigin);
+      res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS");
+      res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization");
+      // pastikan browser mengizinkan embedding resource lintas-origin
+      res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+    },
+  })
+);
+
 
 // basic root & health
 app.get("/", (_req, res) => res.send("Backend Desa — API is running. Use /api/health to check."));

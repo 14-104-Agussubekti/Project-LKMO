@@ -25,7 +25,7 @@ const MainLayout = () => {
                 {user.role === 'admin' && (<NavLink to="/admin/dashboard">Admin Dashboard</NavLink>)}
                 {user.role === 'masyarakat' && (<NavLink to="/dashboard">My Dashboard</NavLink>)}
                 {user.role === 'masyarakat' && (<NavLink to="/buat-pengaduan">Buat Pengaduan</NavLink>)}
-                <span className={styles.userName}>Hi, {user.name}!</span>
+                <span className={styles.userName}> {user.name}</span>
                 <button
                   onClick={handleLogout}
                   className={styles.logoutButton}

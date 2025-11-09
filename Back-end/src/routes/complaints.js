@@ -112,4 +112,69 @@ r.patch("/:ticket/status", requireAuth(["admin"]), async (req, res) => {
   }
 });
 
+// DELETE /api/complaints/:ticket
+// Admin boleh hapus semua; masyarakat hanya boleh hapus pengaduan miliknya
+r.delete("/:ticket", requireAuth(["admin", "masyarakat", "user"]), async (req, res) => {
+  try {
+    const ticket = req.params.ticket;
+    const user = req.user; // requireAuth harus set req.user { sub, role, ... }
+    if (!user) return res.status(401).json({ error: "Unauthorized" });
+
+    // cari pengaduan
+    const comp = await prisma.complaint.findUnique({ where: { id: ticket } });
+    if (!comp) return res.status(404).json({ error: "Pengaduan tidak ditemukan" });
+
+    // cek permission: admin boleh; pemilik (userId) boleh
+    const isAdmin = String(user.role) === "admin";
+    const ownerId = comp.userId ? String(comp.userId) : null;
+    const callerId = String(user.sub ?? user.id ?? user.userId ?? "");
+    const isOwner = ownerId && ownerId === callerId;
+
+    if (!isAdmin && !isOwner) {
+      return res.status(403).json({ error: "Akses ditolak" });
+    }
+
+    // hapus file attachment jika ada
+    if (comp.attachment) {
+      let rel = comp.attachment;
+      try {
+        if (/^https?:\/\//i.test(rel)) {
+          const u = new URL(rel);
+          rel = u.pathname.replace(/^\/+/, "");
+        } else {
+          rel = String(rel).replace(/^\/+/, "");
+        }
+      } catch (err) {
+        rel = String(comp.attachment).replace(/^\/+/, "");
+      }
+
+      const fullPath = path.join(process.cwd(), rel);
+      try {
+        if (fs.existsSync(fullPath)) {
+          await fs.promises.unlink(fullPath);
+          console.log("Deleted attachment:", fullPath);
+        } else {
+          const fallback = path.join(process.cwd(), "uploads", path.basename(rel));
+          if (fs.existsSync(fallback)) {
+            await fs.promises.unlink(fallback);
+            console.log("Deleted attachment (fallback):", fallback);
+          } else {
+            console.warn("Attachment file not found for deletion:", fullPath);
+          }
+        }
+      } catch (err) {
+        console.warn("Error deleting attachment file (ignored):", err.message || err);
+      }
+    }
+
+    // hapus record
+    await prisma.complaint.delete({ where: { id: ticket } });
+
+    return res.json({ ok: true, message: "Pengaduan dihapus" });
+  } catch (err) {
+    console.error("Delete complaint error:", err);
+    return res.status(500).json({ error: "Gagal menghapus pengaduan" });
+  }
+});
+
 export default r;

@@ -7,10 +7,41 @@ import styles from "./AdminDashboard.module.css";
 const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8080/api";
 const BACKEND_ORIGIN = API_BASE.replace(/\/api\/?$/, "");
 
+// ===== helper: normalize attachment -> absolute URL =====
 const makeAttachmentUrl = (attachment) => {
   if (!attachment) return null;
-  if (attachment.startsWith("http://") || attachment.startsWith("https://")) return attachment;
-  return BACKEND_ORIGIN + (attachment.startsWith("/") ? attachment : `/${attachment}`);
+
+  // already absolute
+  if (/^https?:\/\//i.test(attachment)) return attachment;
+
+  // normalize backslashes to slashes and trim
+  let a = String(attachment).replace(/\\/g, "/").trim();
+
+  // remove leading ./ if any
+  a = a.replace(/^\.\//, "");
+
+  // remove multiple leading slashes
+  a = a.replace(/^\/+/, "");
+
+  // backend origin (ensure no trailing slash)
+  const backend = BACKEND_ORIGIN.replace(/\/$/, "");
+
+  // if attachment already contains backend origin (odd case), return as-is
+  if (a.startsWith(backend)) return a;
+
+  // if path already starts with uploads/... use as is
+  if (/^uploads\//i.test(a)) {
+    return backend + "/" + encodeURI(a);
+  }
+
+  // if original attachment had leading "uploads/" or "/uploads/": handle
+  if (/^\/?uploads\//i.test(attachment)) {
+    const pathPart = attachment.replace(/^\/+/, "");
+    return backend + "/" + encodeURI(pathPart);
+  }
+
+  // fallback: assume filename -> place under /uploads/
+  return backend + "/uploads/" + encodeURI(a);
 };
 
 const formatDate = (iso) => {
@@ -35,6 +66,7 @@ const AdminDashboard = () => {
   const [pengaduan, setPengaduan] = useState([]);
   const [selected, setSelected] = useState(null);
   const [processing, setProcessing] = useState(false);
+  const [deletingId, setDeletingId] = useState(null); // new state for delete loading
 
   const loadAll = async () => {
     setLoading(true);
@@ -108,6 +140,27 @@ const AdminDashboard = () => {
     updateStatus(id, "rejected", alasan);
   };
 
+  // --- NEW: delete handler (admin can delete any)
+  const handleDelete = async (id) => {
+    if (!window.confirm("Yakin ingin menghapus pengaduan ini? Tindakan ini tidak dapat dikembalikan.")) return;
+    try {
+      setDeletingId(id);
+      const res = await authFetch(`${API_BASE}/complaints/${id}`, { method: "DELETE" });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(body.error || "Gagal menghapus pengaduan");
+      // remove from state
+      setPengaduan((prev) => prev.filter((p) => p.id !== id));
+      if (selected?.id === id) setSelected(null);
+      alert("Pengaduan berhasil dihapus.");
+    } catch (err) {
+      console.error("Delete error:", err);
+      alert(err.message || "Gagal menghapus pengaduan.");
+    } finally {
+      setDeletingId(null);
+    }
+  };
+  // --- END delete handler
+
   return (
     <div className={`${styles.card} animate-fadeIn`}>
       <h1 className={styles.title}>Manajemen Pengaduan (Admin)</h1>
@@ -159,6 +212,14 @@ const AdminDashboard = () => {
                         <button className={styles.actionButton} onClick={() => setSelected(p)}>
                           Detail
                         </button>
+                        <button
+                          className={styles.actionButtonTolak ? styles.actionButtonTolak : styles.actionButton}
+                          onClick={() => handleDelete(p.id)}
+                          disabled={deletingId === p.id}
+                          style={{ marginLeft: 8 }}
+                        >
+                          {deletingId === p.id ? "Menghapus..." : "Hapus"}
+                        </button>
                       </>
                     )}
                     {p.rawStatus === "in_progress" && (
@@ -169,12 +230,30 @@ const AdminDashboard = () => {
                         <button className={styles.actionButton} onClick={() => setSelected(p)}>
                           Detail
                         </button>
+                        <button
+                          className={styles.actionButtonTolak ? styles.actionButtonTolak : styles.actionButton}
+                          onClick={() => handleDelete(p.id)}
+                          disabled={deletingId === p.id}
+                          style={{ marginLeft: 8 }}
+                        >
+                          {deletingId === p.id ? "Menghapus..." : "Hapus"}
+                        </button>
                       </>
                     )}
                     {(p.rawStatus === "resolved" || p.rawStatus === "rejected") && (
-                      <button className={styles.actionButton} onClick={() => setSelected(p)}>
-                        Detail
-                      </button>
+                      <>
+                        <button className={styles.actionButton} onClick={() => setSelected(p)}>
+                          Detail
+                        </button>
+                        <button
+                          className={styles.actionButtonTolak ? styles.actionButtonTolak : styles.actionButton}
+                          onClick={() => handleDelete(p.id)}
+                          disabled={deletingId === p.id}
+                          style={{ marginLeft: 8 }}
+                        >
+                          {deletingId === p.id ? "Menghapus..." : "Hapus"}
+                        </button>
+                      </>
                     )}
                   </td>
                 </tr>
@@ -221,6 +300,17 @@ const AdminDashboard = () => {
                     src={selected.foto_bukti}
                     alt="Foto Bukti"
                     style={{ maxWidth: "100%", borderRadius: 8, marginTop: 8, objectFit: "cover" }}
+                    onError={(e) => {
+                      console.warn("Image failed to load:", selected.foto_bukti);
+                      // Prevent infinite loop if placeholder also fails
+                      e.currentTarget.onerror = null;
+                      // fallback inline SVG placeholder
+                      e.currentTarget.src =
+                        "data:image/svg+xml;utf8," +
+                        encodeURIComponent(
+                          `<svg xmlns='http://www.w3.org/2000/svg' width='600' height='400'><rect width='100%' height='100%' fill='%23eee'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%23777' font-size='18'>Gagal memuat gambar</text></svg>`
+                        );
+                    }}
                   />
                 ) : (
                   <div style={{ color: "#777", fontSize: 14, marginTop: 8 }}>Tidak ada foto bukti.</div>
@@ -260,6 +350,24 @@ const AdminDashboard = () => {
                       disabled={processing}
                     >
                       Tolak
+                    </button>
+                    <button
+                      onClick={() => {
+                        handleDelete(selected.id);
+                        setSelected(null);
+                      }}
+                      disabled={deletingId === selected.id}
+                      style={{
+                        marginLeft: 8,
+                        backgroundColor: "#e03e2d",
+                        color: "#fff",
+                        padding: "8px 12px",
+                        borderRadius: 6,
+                        border: 0,
+                        cursor: "pointer",
+                      }}
+                    >
+                      {deletingId === selected.id ? "Menghapus..." : "Hapus Pengaduan"}
                     </button>
                   </>
                 )}
